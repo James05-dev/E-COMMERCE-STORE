@@ -3,17 +3,19 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useUserStore } from "../stores/useUserStore";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
 
   const { login, loading } = useUserStore();
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(email, password);
     login(email, password);
+    navigate("/");
   };
 
   return (

@@ -7,8 +7,8 @@ import { redis } from "../lib/redis.js";
 import cloudinary from "../lib/cloudinary.js";
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await product.find({});
-    res.json({ products });
+    const Products = await product.find({});
+    res.json({ Products });
   } catch (error) {
     console.log("Error in getAllproducts controller", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -42,8 +42,9 @@ export const getFeaturedProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
+    console.log('ETERED THE CREATE PRODUCT COTROLLER')
     const { name, description, price, image, category } = req.body;
-
+    console.log('RECEIVED CREATE DATA',req.body)
     let cloudinaryResponse = null;
 
     if (image) {
@@ -51,7 +52,8 @@ export const createProduct = async (req, res) => {
         folder: "products",
       });
     }
-    const product = await product.create({
+    console.log('REACHED LINE 55')
+    const Product = await product.create({
       name,
       description,
       price,
@@ -61,7 +63,7 @@ export const createProduct = async (req, res) => {
       category,
     });
 
-    res.status(201).json(product);
+    res.status(201).json(Product);
   } catch (error) {
     console.log("Error in createProduct controller", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -70,12 +72,12 @@ export const createProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
-    const product = await product.findById(req.params.id);
-    if (!product) {
+    const Product = await product.findById(req.params.id);
+    if (!Product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    if (product.image) {
-      const publicId = product.image.split("/").pop().split(".")[0];
+    if (Product.image) {
+      const publicId = Product.image.split("/").pop().split(".")[0];
       try {
         await cloudinary.uploader.destroy(publicId);
         console.log("deleted image from cloudinary");
