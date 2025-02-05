@@ -108,7 +108,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }); 
     if (user && (await user.comparePassword(password))) {
       const { accessToken, refreshToken } = generateTokens(user, user._id);
       await storeRefreshToken(user._id, refreshToken);
