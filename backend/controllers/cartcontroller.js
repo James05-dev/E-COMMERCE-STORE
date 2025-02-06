@@ -3,10 +3,17 @@ import product from "../models/product.model.js";
 export const getCartProducts = async (req, res) => {
   try {
     const products = await product.find({ _id: { $in: req.user.cartItems } });
+    console.log('Products from getCart',products)
     const cartItems = products.map((product) => {
       const item = req.user.cartItems.find(
-        (cartItem) => cartItem.id === product._id
+        (cartItem) => {
+          console.log("Cart item ID from getCart",cartItem.id,typeof cartItem.id);
+          console.log("Product item ID from getCart",product._id,typeof product._id)
+          console.log(cartItem.id == product._id);
+          return cartItem.id == product._id;
+        }
       );
+      console.log("Items from get cart products",item)
       return { ...product.toJSON(), quantity: item.quantity };
     });
     res.json(cartItems);
@@ -28,6 +35,7 @@ export const addToCart = async (req, res) => {
     }
 
     await user.save();
+    console.log('USER CART ITEMS LOG',user.cartItems)
     res.json(user.cartItems);
   } catch (error) {
     console.log("Error in addToCart controller", error.message);
