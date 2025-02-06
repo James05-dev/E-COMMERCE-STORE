@@ -9,7 +9,7 @@ export const createCheckoutSession = async (req, res) => {
       return res.status(400).json({ error: "Invalid or empty products array" });
     }
     let totalAmount = 0;
-    const lineItem = product.map((product) => {
+    const lineItem = products.map((product) => {
       const amount = Math.round(product.price * 100);
       totalAmount += amount * product.quantity;
 
@@ -22,6 +22,7 @@ export const createCheckoutSession = async (req, res) => {
           },
           unit_amount: amount,
         },
+        quantity: product.quantity || 1,
       };
     });
 
@@ -38,10 +39,10 @@ export const createCheckoutSession = async (req, res) => {
         );
       }
     }
-
-    const session = await stripe.checkout.session.create({
+    console.log('STRIPE CHECKOUT',stripe.checkout.sessions)
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: lineItems,
+      line_items: lineItem,
       mode: "payment",
       success_url: `${process.env.CLIENT_URL}/success?session_id=(CHECKOUT_SESSION_ID`,
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
@@ -53,7 +54,7 @@ export const createCheckoutSession = async (req, res) => {
           ]
         : [],
       metadata: {
-        userId: req.user._id.tostring(),
+        userId: req.user._id.toString(),
         couponCode: couponCode || "",
         products: JSON.stringify(
           products.map((p) => ({

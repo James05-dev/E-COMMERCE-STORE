@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
  * @returns {Object} - Tokens object
  */
 const generateTokens = (user, _id) => {
-  const accessToken = jwt.sign(
+  const accessToken = jwt.sign(  
     { userId: _id },
     process.env.ACCESS_TOKEN_SECRET,
     {

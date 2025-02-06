@@ -42,9 +42,9 @@ export const getFeaturedProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    console.log('ETERED THE CREATE PRODUCT COTROLLER')
+    console.log("ETERED THE CREATE PRODUCT COTROLLER");
     const { name, description, price, image, category } = req.body;
-    console.log('RECEIVED CREATE DATA',req.body)
+    console.log("RECEIVED CREATE DATA", req.body);
     let cloudinaryResponse = null;
 
     if (image) {
@@ -52,7 +52,7 @@ export const createProduct = async (req, res) => {
         folder: "products",
       });
     }
-    console.log('REACHED LINE 55')
+    console.log("REACHED LINE 55");
     const Product = await product.create({
       name,
       description,
@@ -98,7 +98,7 @@ export const getRecommendedProducts = async (req, res) => {
     const products = await product.aggregate([
       {
         $sample: {
-          size: 3,
+          size: 4,
         },
       },
       {
