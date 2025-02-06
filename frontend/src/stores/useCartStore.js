@@ -7,6 +7,7 @@ export const useCartStore = create((set, get) => ({
   coupon: null,
   total: 0,
   subtotal: 0,
+  isCouponApplied: false,
 
   getCartItems: async () => {
     try {
@@ -44,10 +45,30 @@ export const useCartStore = create((set, get) => ({
     }
   },
 
-  removeFromCart: async (productId) => {
-    await axios.delete("/api/cart", { data: { productId} });
+  /*************  ✨ Codeium Command ⭐  *************/
+  /**
+   * Remove an item from the cart
+   * @param {string} productId
+
+/******  34b13a92-4954-41cb-951d-328e21da4221  *******/ removeFromCart: async (
+    productId
+  ) => {
+    await axios.delete("/api/cart", { data: { productId } });
     set((prevState) => ({
       cart: prevState.cart.filter((item) => item._id !== productId),
+    }));
+    get().calculateTotals();
+  },
+  updateQuantity: async (productId, quantity) => {
+    if (quantity === 0) {
+      get().removeFromCart(productId);
+      return;
+    }
+    await axios.put(`/api/cart/${productId}`, { quantity });
+    set((prevState) => ({
+      cart: prevState.cart.map((item) =>
+        item._id === productId ? { ...item, quantity } : item
+      ),
     }));
     get().calculateTotals();
   },
