@@ -25,5 +25,5 @@ router.post("/refresh-token", refreshToken);
 
 // Get user profile (protected route)
 router.post("/profile", protectRoute, getProfile);
-
+router.get("/check-profile", protectRoute, getProfile);
 export default router;
