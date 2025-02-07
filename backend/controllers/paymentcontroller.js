@@ -39,7 +39,7 @@ export const createCheckoutSession = async (req, res) => {
         );
       }
     }
-    console.log('STRIPE CHECKOUT',stripe.checkout.sessions)
+    console.log("STRIPE CHECKOUT", stripe.checkout.sessions);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItem,
@@ -130,6 +130,7 @@ async function createStripeCoupon(discountPercentage) {
 }
 
 async function createNewCoupon(userId) {
+  await Coupon.findOneAndDelete({ userId });
   const newCoupon = new Coupon({
     code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
     discountPercentage: 10,
