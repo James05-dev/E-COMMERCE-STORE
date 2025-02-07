@@ -1,4 +1,4 @@
-import {  motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "../lib/axios";
 import { Users, Package, ShoppingCart, DollarSign } from "lucide-react";
@@ -50,25 +50,25 @@ const AnalyticsTab = () => {
         <AnalyticsCard
           title="Total Users"
           value={analyticsData.users.toLocaleString()}
-          icon={Users}
+          Icon={Users}
           color="from-emerald-500 to-teal-700"
         />
         <AnalyticsCard
           title="Total Products"
           value={analyticsData.products.toLocaleString()}
-          icon={Package}
+          Icon={Package}
           color="from-emerald-500 to-green-700"
         />
         <AnalyticsCard
           title="Total Sales"
           value={analyticsData.totalSales.toLocaleString()}
-          icon={ShoppingCart}
+          Icon={ShoppingCart}
           color="from-emerald-500 to-cyan-700"
         />
         <AnalyticsCard
           title="Total Revenue"
           value={`$${analyticsData.totalRevenue.toLocaleString()}`}
-          icon={DollarSign}
+          Icon={DollarSign}
           color="from-emerald-500 to-lime-700"
         />
       </div>
@@ -112,7 +112,7 @@ const AnalyticsTab = () => {
 
 export default AnalyticsTab;
 
-export const AnalyticsCard = ({ title, value, icon, color }) => (
+export const AnalyticsCard = ({ title, value, Icon, color }) => (
   <motion.div
     className={`bg-gray-800 rounded-lg p-6 shadow-lg overflow-hidden relative ${color}`}
     initial={{ opacity: 0, y: 20 }}
@@ -126,7 +126,7 @@ export const AnalyticsCard = ({ title, value, icon, color }) => (
       </div>
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 to-emerald-900 opacity-30" />
       <div className="absolute -bottom-4  -right-4 text-emerald-800 opacity-50">
-        {/* <Icon className="h-32 w-32" /> */}
+        <Icon className="h-32 w-32" />
       </div>
     </div>
   </motion.div>
