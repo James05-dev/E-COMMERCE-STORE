@@ -21,18 +21,21 @@ export const getAllProducts = async (req, res) => {
  */
 export const getFeaturedProducts = async (req, res) => {
   try {
-    // Check if featured products are cached in redis
-    let featuredProducts = await redis.get("featuredProducts");
-    if (featuredProducts) {
-      return res.json(JSON.parse(featuredProducts));
-    }
+    // // Check if featured products are cached in redis
+    // let featuredProducts = await redis.get("featuredProducts");
+    // // console.log("featuredProducts", featuredProducts);
+    // if (featuredProducts) {
+    //   return res.json(JSON.parse(featuredProducts));
+    // }
     // If not cached, query the database and store in redis
-    featuredProducts = await product.find({ isfeatured: true }).lean();
+    let featuredProducts = await product.find({ isFeatured: true }).lean();
+    console.log("featuredProducts", featuredProducts);
 
     if (!featuredProducts) {
       return res.status(404).json({ message: "No featured products found" });
     }
     await redis.set("featuredProducts", JSON.stringify(featuredProducts));
+
     res.json(featuredProducts);
   } catch (error) {
     console.log("Error in getFeaturedProducts controller", error.message);
@@ -69,7 +72,6 @@ export const createProduct = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 export const deleteProduct = async (req, res) => {
   try {

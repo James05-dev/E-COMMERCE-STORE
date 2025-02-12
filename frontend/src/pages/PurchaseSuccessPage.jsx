@@ -11,11 +11,16 @@ const PurchaseSuccessPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const sessionId = new URLSearchParams(window.location.search).get(
+      "session_id"
+    );
+    console.log(sessionId);
     const handleCheckoutSuccess = async (sessionId) => {
       try {
-        await axios.post("/payments/checkout-success", {
+        const res = await axios.post("/payment/checkout-success", {
           sessionId,
         });
+        console.log(res);
         clearCart();
       } catch (error) {
         console.log(error);
@@ -23,9 +28,6 @@ const PurchaseSuccessPage = () => {
         setIsProcessing(false);
       }
     };
-    const sessionId = new URLSearchParams(window.location.search).get(
-      "session_id"
-    );
     if (sessionId) {
       handleCheckoutSuccess(sessionId);
     } else {

@@ -92,10 +92,12 @@ export const checkoutSuccess = async (req, res) => {
         );
       }
       const parsedProducts = JSON.parse(session.metadata.products);
+      console.log(session)
+      console.log(parsedProducts)
       const newOrder = new Order({
         user: session.metadata.userId,
         products: parsedProducts.map((product) => ({
-          product: product.id,
+          product: product?._id,
           quantity: product.quantity,
           price: product.price,
         })),
