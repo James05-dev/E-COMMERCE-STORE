@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL:
     import.meta.env.mode === "development"
-      ? "http://localhost:5000/api"
+      ? "https://backend-e-commerce-navy.vercel.app/api"
       : "/api",
   withCredentials: true,
 });
