@@ -24,6 +24,7 @@ export const useUserStore = create((set, get) => ({
   },
   login: async (email, password) => {
     set({ loading: true });
+console.log("ENV MODE:", import.meta.env.MODE);
 
     try {
       const res = await axios.post("/auth/login", { email, password });
