@@ -37,7 +37,7 @@ export const useCartStore = create((set, get) => ({
 
   getCartItems: async () => {
     try {
-      const res = await axios.get("/api/cart");
+      const res = await axios.get("/cart");
       set({ cart: res.data });
       get().calculateTotals();
     } catch (error) {
@@ -52,7 +52,7 @@ export const useCartStore = create((set, get) => ({
 
   addToCart: async (product) => {
     try {
-      await axios.post("/api/cart", { productId: product._id });
+      await axios.post("/cart", { productId: product._id });
       toast.success("product added to cart");
 
       set((prevState) => {
@@ -83,7 +83,7 @@ export const useCartStore = create((set, get) => ({
 /******  34b13a92-4954-41cb-951d-328e21da4221  *******/ removeFromCart: async (
     productId
   ) => {
-    await axios.delete("/api/cart", { data: { productId } });
+    await axios.delete("/cart", { data: { productId } });
     set((prevState) => ({
       cart: prevState.cart.filter((item) => item._id !== productId),
     }));
@@ -94,7 +94,7 @@ export const useCartStore = create((set, get) => ({
       get().removeFromCart(productId);
       return;
     }
-    await axios.put(`/api/cart/${productId}`, { quantity });
+    await axios.put(`/cart/${productId}`, { quantity });
     set((prevState) => ({
       cart: prevState.cart.map((item) =>
         item._id === productId ? { ...item, quantity } : item
