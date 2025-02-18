@@ -23,7 +23,7 @@ const generateTokens = (user, _id) => {
       expiresIn: "7d",
     }
   );
-  console.log('ACCESS TOKEN',accessToken,'REFRESH TOKEN',refreshToken)
+  // console.log('ACCESS TOKEN',accessToken,'REFRESH TOKEN',refreshToken)
   return { accessToken, refreshToken };
 };
 

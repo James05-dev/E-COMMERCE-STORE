@@ -3,7 +3,9 @@ import User from "../models/user.model.js";
 
 export const protectRoute = async (req, res, next) => {
   try {
+    console.log(req, req?.cookies.accessToken);
     const accessToken = req.cookies.accessToken;
+    console.log("Access Token from Cookies:", req.cookies.accessToken);
 
     if (!accessToken) {
       return res
