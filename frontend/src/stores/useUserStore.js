@@ -28,6 +28,7 @@ console.log("ENV MODE:", import.meta.env.MODE);
 
     try {
       const res = await axios.post("/auth/login", { email, password });
+      console.log(res.data)
       set({ user: res.data, loading: false });
     } catch (error) {
       set({ loading: false });

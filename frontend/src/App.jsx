@@ -20,11 +20,15 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
   useEffect(() => {
-    if (!user) return;
+    if (!user){
+    console.log("no user")
+    } ;
 
     getCartItems();
   }, [getCartItems, user]);
+
   if (checkingAuth) return <LoadingSpinner />;
 
   return (
@@ -55,7 +59,7 @@ function App() {
           />
           <Route path="/category/:category" element={<CategoryPage />} />
           <Route
-            path="/cart"
+            path="/carts"
             element={user ? <CartPage /> : <Navigate to="/login" />}
           />
           <Route

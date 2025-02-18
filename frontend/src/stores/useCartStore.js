@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
+
 export const useCartStore = create((set, get) => ({
   cart: [],
   coupon: null,
@@ -38,11 +39,12 @@ export const useCartStore = create((set, get) => ({
   getCartItems: async () => {
     try {
       const res = await axios.get("/cart");
+  
       set({ cart: res.data });
       get().calculateTotals();
     } catch (error) {
       set({ cart: [] });
-      toast.error(error.response.data.message || "An error occurred");
+      toast.error(error.response?.data.message || "An error occurred");
     }
   },
 
@@ -52,8 +54,15 @@ export const useCartStore = create((set, get) => ({
 
   addToCart: async (product) => {
     try {
-      await axios.post("/cart", { productId: product._id });
-      toast.success("product added to cart");
+      const response = await axios.post("/cart", {
+        productId: product._id,
+      });
+
+      if (response.status !== 200) {
+        throw new Error("Failed to add product to cart");
+      }
+
+      toast.success("Product added to cart");
 
       set((prevState) => {
         const existingItem = prevState.cart.find(
@@ -71,7 +80,8 @@ export const useCartStore = create((set, get) => ({
 
       get().calculateTotals();
     } catch (error) {
-      toast.error(error.response.data.message || "An error occurred");
+      const errorMessage = error.response?.data?.message || "An error occurred";
+      toast.error(errorMessage);
     }
   },
 
