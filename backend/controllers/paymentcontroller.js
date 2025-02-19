@@ -108,9 +108,10 @@ export const checkoutSuccess = async (req, res) => {
         stripeSessionId: sessionId,
       });
       //This is to prevent the unique session id error.IT MAY BE CHANGED ACCORDING TO THE APPS LOGIC
-      if (!(existingOrder)) {
-        await newOrder.save();
-      }
+      // if (!(existingOrder)) {
+      //   await newOrder.save();
+      // }
+      await newOrder.save();
       res.status(200).json({
         success: true,
         message:
