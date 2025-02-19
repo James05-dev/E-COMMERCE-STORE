@@ -1,10 +1,12 @@
 import Coupon from "../models/coupon.model.js";
 import Order from "../models/order.model.js";
 import { stripe } from "../lib/stripe.js";
+import product from "../models/product.model.js";
 
 export const createCheckoutSession = async (req, res) => {
   try {
     const { products, couponCode } = req.body;
+    console.log('Products from create checkout',products)
     if (!Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ error: "Invalid or empty products array" });
     }
@@ -35,21 +37,21 @@ export const createCheckoutSession = async (req, res) => {
       });
       if (coupon) {
         totalAmount -= Math.round(
-          (totalAmount * coupon.discountPercentage) / 100
+          (totalAmount *Number( coupon.discountPercentage)) / 100
         );
       }
     }
-    console.log("STRIPE CHECKOUT", stripe.checkout.sessions);
+    console.log('coupon',coupon)
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItem,
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id=${CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
       discounts: coupon
         ? [
             {
-              coupon: await createStripeCoupon(coupon, discountPercentage),
+              coupon: await createStripeCoupon(coupon, Number(coupon.discountPercentage)),
             },
           ]
         : [],
@@ -58,14 +60,14 @@ export const createCheckoutSession = async (req, res) => {
         couponCode: couponCode || "",
         products: JSON.stringify(
           products.map((p) => ({
-            id: p.id,
+            id: p._id,
             price: p.price,
             quantity: p.quantity,
           }))
         ),
       },
     });
-
+    console.log('Meta dataa from server',session.metadata)
     if (totalAmount >= 20000) {
       await createNewCoupon(req.user._id);
     }
@@ -94,18 +96,21 @@ export const checkoutSuccess = async (req, res) => {
       const parsedProducts = JSON.parse(session.metadata.products);
       console.log(session)
       console.log(parsedProducts)
+      const existingOrder = await Order.findOne({ user: session.metadata.userId})
       const newOrder = new Order({
         user: session.metadata.userId,
         products: parsedProducts.map((product) => ({
-          product: product?._id,
+          product: product.id,
           quantity: product.quantity,
           price: product.price,
         })),
         totalAmount: session.amount_total / 100,
         stripeSessionId: sessionId,
       });
-
-      await newOrder.save();
+      //This is to prevent the unique session id error.IT MAY BE CHANGED ACCORDING TO THE APPS LOGIC
+      if (!(existingOrder)) {
+        await newOrder.save();
+      }
       res.status(200).json({
         success: true,
         message:
@@ -122,12 +127,12 @@ export const checkoutSuccess = async (req, res) => {
   }
 };
 
-async function createStripeCoupon(discountPercentage) {
+async function createStripeCoupon(couponObject) {
+  console.log('DISCOUNT PERCENTAGE',couponObject)
   const coupon = await stripe.coupons.create({
-    percent_off: discountPercentage,
+    percent_off: Number(couponObject.discountPercentage),
     duration: "once",
   });
-
   return coupon.id;
 }
 
