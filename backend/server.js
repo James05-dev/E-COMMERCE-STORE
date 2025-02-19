@@ -55,13 +55,12 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/payment", paymentRoutes);
-app.use("/api/analytics", analyticsRoutes);
+app.use("/api/analytics", analyticsRoutes); 
 app.get("/", (req, res) => {
   res.send("tested");
 });
 
 app.listen(PORT, () => {
-  console.log("server is running on http://localhost:" + PORT);
-
+  console.log(`Server is running on port ${PORT}`);
   connectDB();
 });
