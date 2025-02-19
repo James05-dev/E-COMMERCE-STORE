@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
  * @returns {Object} - Tokens object
  */
 const generateTokens = (user, _id) => {
-  const accessToken = jwt.sign(  
+  const accessToken = jwt.sign(
     { userId: _id },
     process.env.ACCESS_TOKEN_SECRET,
     {
@@ -51,7 +51,7 @@ const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true, //accessible only by web server
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict", //prevents xss attacks
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 15 * 60 * 1000, //15 minutes
   });
 
@@ -75,15 +75,21 @@ export const signup = async (req, res) => {
 
     if (userExists) {
       res.status(400).json({ message: "User already exists" });
-      console.log('Returned from signup')
-      return
+      console.log("Returned from signup");
+      return;
     }
     const user = await User.create({ name, email, password });
 
-    console.log('Attempting to generate a token')
+    console.log("Attempting to generate a token");
     const { accessToken, refreshToken } = generateTokens(user, user._id);
-    
-    console.log("Signup function:","ACCESS TOKEN", accessToken, "REFRESH TOKEN", refreshToken);
+
+    console.log(
+      "Signup function:",
+      "ACCESS TOKEN",
+      accessToken,
+      "REFRESH TOKEN",
+      refreshToken
+    );
     await storeRefreshToken(user._id, refreshToken);
 
     setCookies(res, accessToken, refreshToken);
@@ -95,7 +101,7 @@ export const signup = async (req, res) => {
       role: user.role,
     });
   } catch (error) {
-    console.log('An error occured',error.message)
+    console.log("An error occured", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -108,7 +114,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email }); 
+    const user = await User.findOne({ email });
     if (user && (await user.comparePassword(password))) {
       const { accessToken, refreshToken } = generateTokens(user, user._id);
       await storeRefreshToken(user._id, refreshToken);
@@ -179,7 +185,7 @@ export const refreshToken = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true, //accessible only by web server
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 15 * 60 * 1000,
     });
     res.json({ message: "Token refreshed successfully" });

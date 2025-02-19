@@ -3,14 +3,16 @@ import User from "../models/user.model.js";
 
 export const protectRoute = async (req, res, next) => {
   try {
-    // console.log(req, req?.cookies.accessToken);
-    const accessToken = req.cookies.accessToken;
-    console.log("Access Token from Cookies:", req.cookies.accessToken);
+    console.log("All Cookies:", req.cookies);
+    console.log("Headers:", req.headers);
+    const accessToken = req.cookies?.accessToken;
 
     if (!accessToken) {
-      return res
-        .status(401)
-        .json({ message: "unauthorized - No access token provided" });
+      return res.status(401).json({
+        message: "unauthorized - No access token provided",
+        cookies: req.cookies,
+        headers: req.headers,
+      });
     }
     try {
       const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
