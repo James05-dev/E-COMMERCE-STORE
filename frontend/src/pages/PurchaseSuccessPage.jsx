@@ -14,20 +14,23 @@ const PurchaseSuccessPage = () => {
     const sessionId = new URLSearchParams(window.location.search).get(
       "session_id"
     );
-    console.log(sessionId);
+    console.log("Session ID:", sessionId);
+
     const handleCheckoutSuccess = async (sessionId) => {
       try {
         const res = await axios.post("/payment/checkout-success", {
           sessionId,
         });
-        console.log(res);
-        clearCart();
+        console.log("Checkout success response:", res);
+        await clearCart();
       } catch (error) {
-        console.log(error);
+        console.error("Checkout error:", error.response?.data || error.message);
+        setError(error.response?.data?.message || "Failed to process payment");
       } finally {
         setIsProcessing(false);
       }
     };
+
     if (sessionId) {
       handleCheckoutSuccess(sessionId);
     } else {

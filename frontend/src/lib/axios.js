@@ -8,4 +8,24 @@ const axiosInstance = axios.create({
   },
 });
 
+// Add request interceptor to handle errors
+axiosInstance.interceptors.request.use(
+  (config) => {
+    console.log("Request URL:", config.url);
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle errors
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API Error:", error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;
