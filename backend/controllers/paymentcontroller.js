@@ -42,12 +42,17 @@ export const createCheckoutSession = async (req, res) => {
       }
     }
     console.log('coupon',coupon)
+
+    const clientURL = process.env.NODE_ENV === 'production'
+      ? 'https://e-commerce-store-lake-gamma.vercel.app'
+      : process.env.CLIENT_URL;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItem,
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
+      success_url: `${clientURL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${clientURL}/purchase-cancel`,
       discounts: coupon
         ? [
             {
