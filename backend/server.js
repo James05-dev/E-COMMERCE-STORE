@@ -29,7 +29,8 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS",origin));
+        console.log("Blocked origin:", origin);
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
@@ -55,7 +56,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/payment", paymentRoutes);
-app.use("/api/analytics", analyticsRoutes); 
+app.use("/api/analytics", analyticsRoutes);
 app.get("/", (req, res) => {
   res.send("tested");
 });
